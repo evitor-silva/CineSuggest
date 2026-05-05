@@ -6,14 +6,11 @@ COPY . .
 
 RUN gradle clean bootJar --no-daemon -x test
 
-FROM eclipse-temurin:21-jdk AS deploy
+FROM openjdk:21-ea AS deploy
 WORKDIR /app
 
 COPY --from=build /api-cinesuggest/build/libs/*.jar app_runcine.jar
 
-RUN chmod 555 app_runcine.jar
-
-USER springuser
 
 ENTRYPOINT ["java", "-jar", "app_runcine.jar"]
 

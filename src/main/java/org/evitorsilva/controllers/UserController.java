@@ -4,6 +4,7 @@ import org.evitorsilva.util.DTO.requests.CreateUserRequest;
 import org.evitorsilva.util.DTO.requests.LoginRequest;
 import org.evitorsilva.services.JwtService;
 import org.evitorsilva.services.UserService;
+import org.evitorsilva.util.DTO.response.TokenUserLogged;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -36,23 +37,18 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity loginUser(@RequestBody LoginRequest request) throws Exception {
-        try {
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.email(), request.password())
-            );
+    public ResponseEntity<TokenUserLogged> loginUser(@RequestBody LoginRequest request) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.email(), request.password())
+        );
 
-            Set<GrantedAuthority> roles = authentication.getAuthorities().stream()
-                    .filter(auth -> auth.getAuthority() != null && auth.getAuthority().startsWith("ROLE"))
-                    .collect(Collectors.toSet());
+        Set<GrantedAuthority> roles = authentication.getAuthorities().stream()
+                .filter(auth -> auth.getAuthority() != null && auth.getAuthority().startsWith("ROLE"))
+                .collect(Collectors.toSet());
 
-            String token = jwtService.create(authentication.getName(), roles);
+        String token = jwtService.create(authentication.getName(), roles);
 
-            return ResponseEntity.status(201).body(token);
-
-        } catch (Exception e) {
-            return ResponseEntity.status(401).body(e.getMessage());
-        }
+        return ResponseEntity.status(201).body(new TokenUserLogged(token, "Bearer"));
     }
 
 }

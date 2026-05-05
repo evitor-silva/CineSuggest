@@ -21,6 +21,6 @@ public class MediaController {
     @PostMapping("/media")
     public ResponseEntity create(@RequestBody MovieRequest request) {
 
-       return ResponseEntity.ok(201);
+        return ResponseEntity.ok(201);
     }
 }

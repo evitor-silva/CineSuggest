@@ -7,10 +7,10 @@ import org.evitorsilva.util.DTO.response.UserNotLogged;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import javax.naming.InsufficientResourcesException;
 import java.time.LocalDateTime;
 
 @ControllerAdvice
@@ -24,6 +24,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InsufficientAuthenticationException.class)
     public ResponseEntity<UserNotLogged> handleInsufficientAuthentication(InsufficientAuthenticationException ex, HttpServletRequest request) {
         return buildResponse("Token inválido ou expirado", request);
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<UserNotLogged> handleErrorAuthentication(AuthenticationException ex, HttpServletRequest request) {
+        return buildResponse("Login ou Senha Incorretos", request);
     }
 
     @ExceptionHandler(UserNotLoggedException.class)

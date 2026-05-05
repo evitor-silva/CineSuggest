@@ -14,6 +14,7 @@ import java.util.Set;
 @Getter
 public class AuthorityEntity implements GrantedAuthority {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Enumerated(EnumType.STRING)

@@ -6,6 +6,7 @@ services:
       ORACLE_PASSWORD: senhadificil
     volumes:
       - oracle_data:/opt/oracle/oradata
+      - ./sql/seeder.sql:/docker-entrypoint-initdb.d/init.sql
 
   api-cinesuggest:
     build:
