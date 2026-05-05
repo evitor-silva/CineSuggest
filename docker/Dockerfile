@@ -1,12 +1,20 @@
-FROM gradle:8.14-jdk-21-and-24 AS build
+FROM gradle:8.14 AS build
 WORKDIR /api-cinesuggest
 
-COPY ../.. .
 
-RUN ./gradlew clean bootJar --no-daemon -x test
+COPY . .
 
-RUN cp /api-cinesuggest/build/libs/*.jar app_runcine.jar
+RUN gradle clean bootJar --no-daemon -x test
 
-EXPOSE 8080
+FROM eclipse-temurin:21-jdk AS deploy
+WORKDIR /app
+
+COPY --from=build /api-cinesuggest/build/libs/*.jar app_runcine.jar
+
+RUN chmod 555 app_runcine.jar
+
+USER springuser
 
 ENTRYPOINT ["java", "-jar", "app_runcine.jar"]
+
+EXPOSE 8080
