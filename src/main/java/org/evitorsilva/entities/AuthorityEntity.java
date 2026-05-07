@@ -2,6 +2,7 @@ package org.evitorsilva.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 import org.evitorsilva.util.Enums.ERoles;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
@@ -12,6 +13,7 @@ import java.util.Set;
 @Entity
 @Table(name = "roles")
 @Getter
+@Setter
 public class AuthorityEntity implements GrantedAuthority {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,14 +24,6 @@ public class AuthorityEntity implements GrantedAuthority {
 
     @ManyToMany(mappedBy = "roles")
     private Set<UserEntity> users = new HashSet<>();
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getId() {
-        return id;
-    }
 
     @Override
     public @Nullable String getAuthority() {

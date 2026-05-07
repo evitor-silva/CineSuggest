@@ -1,19 +1,17 @@
 package org.evitorsilva.entities;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 
-import java.util.Set;
 
 @Entity
-@Table(name = "catalog_media")
-public class CatalogEntity {
-
+@Getter
+@Table( name= "genres")
+public class GenresEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
 
-    @OneToMany
-    private Set<MediaEntity> content;
+    private String title;
 }
-
