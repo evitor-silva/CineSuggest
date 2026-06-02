@@ -2,7 +2,7 @@ package org.evitorsilva.controllers;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import jakarta.servlet.http.HttpServletRequest;
-import org.evitorsilva.util.DTO.exception.UserNotLoggedException;
+import org.evitorsilva.exceptions.UserNotLoggedException;
 import org.evitorsilva.util.DTO.response.UserNotLogged;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +18,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(JWTVerificationException.class)
     public ResponseEntity<UserNotLogged> handleJwtError(JWTVerificationException ex, HttpServletRequest request) {
-        return buildResponse("Token inválido ou expirado", request);
+        return buildResponse("Token expirado", request);
     }
 
     @ExceptionHandler(InsufficientAuthenticationException.class)

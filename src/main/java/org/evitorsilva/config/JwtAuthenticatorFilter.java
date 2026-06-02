@@ -7,7 +7,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.evitorsilva.services.JwtService;
-import org.evitorsilva.util.DTO.exception.UserNotLoggedException;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,7 +17,9 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtAuthenticatorFilter extends OncePerRequestFilter {
@@ -34,7 +35,7 @@ public class JwtAuthenticatorFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
         try {
-            final String authHeader = request.getHeader("Authorization");
+            String authHeader = request.getHeader("Authorization");
 
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
                 filterChain.doFilter(request, response);
@@ -42,17 +43,21 @@ public class JwtAuthenticatorFilter extends OncePerRequestFilter {
             }
 
             String jwt = authHeader.substring(7);
-
             DecodedJWT decodedJWT = jwtService.compare(jwt);
 
-            Map<String, Claim> claim = decodedJWT.getClaims();
+            Map<String, Claim> claims = decodedJWT.getClaims();
 
-            if (claim.isEmpty()) {
-                throw new UserNotLoggedException("Usuário não logado");
+            if (claims.isEmpty()) {
+                throw new IOException("Usuário não logado");
             }
 
+            List<String> roles = claims.get("roles").asList(String.class);
+            List<SimpleGrantedAuthority> authorities = roles.stream()
+                    .map(SimpleGrantedAuthority::new)
+                    .collect(Collectors.toList());
+
             UsernamePasswordAuthenticationToken authToken =
-                    new UsernamePasswordAuthenticationToken(claim.get("name"), null, claim.get("roles").asList(SimpleGrantedAuthority.class));
+                    new UsernamePasswordAuthenticationToken(claims.get("name"), null, authorities);
 
             SecurityContextHolder.getContext().setAuthentication(authToken);
 
@@ -62,5 +67,4 @@ public class JwtAuthenticatorFilter extends OncePerRequestFilter {
             resolver.resolveException(request, response, null, e);
         }
     }
-
 }

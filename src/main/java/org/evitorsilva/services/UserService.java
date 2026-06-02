@@ -1,12 +1,12 @@
 package org.evitorsilva.services;
 
-import org.antlr.v4.runtime.misc.NotNull;
 import org.evitorsilva.util.DTO.requests.CreateUserRequest;
 import org.evitorsilva.util.Enums.ERoles;
 import org.evitorsilva.entities.AuthorityEntity;
 import org.evitorsilva.entities.UserEntity;
 import org.evitorsilva.repositories.UserRepository;
 import org.evitorsilva.repositories.AuthorityRepository;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -50,7 +50,7 @@ public class UserService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public @NullMarked UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         UserEntity userOpt = this.findUser(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));

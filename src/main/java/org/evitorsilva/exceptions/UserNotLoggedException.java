@@ -1,4 +1,4 @@
-package org.evitorsilva.util.DTO.exception;
+package org.evitorsilva.exceptions;
 
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
