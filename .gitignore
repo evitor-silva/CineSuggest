@@ -1,2 +1,4 @@
 /.continue
 *.properties
+/build
+/gradle
