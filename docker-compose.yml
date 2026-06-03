@@ -1,6 +1,6 @@
-services:
+ services:
   oracle-db:
-    image: gvenzl/oracle-free:slim
+    image: container-registry.oracle.com/database/free:latest-lite
     container_name: oracle-db
     environment:
       ORACLE_PASSWORD: senhadificil
