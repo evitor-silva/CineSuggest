@@ -48,7 +48,7 @@ jobs:
           file: ./docker/Dockerfile
           context: .
           push: true
-          platforms: linux/arm64
+          platforms: linux/amd64, linux/arm64
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/cinesuggest:latest
 
       - name: Deploy on Server Ubuntu (K3s)
