@@ -42,14 +42,30 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push Docker image (ARM64)
+      - name: Build and push Docker image (Multi-arch)
         uses: docker/build-push-action@v5
         with:
           file: ./docker/Dockerfile
           context: .
           push: true
           platforms: linux/amd64, linux/arm64
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/cinesuggest:latest
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/cinesuggest:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/cinesuggest:${{ github.sha }}
+
+      - name: Replace image tag in deployment template
+        run: |
+          sed -i 's|cinesuggest:latest|cinesuggest:${{ github.sha }}|g' deploy.yaml
+
+      - name: Copy deploy.yaml to Server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          source: "deploy.yaml"
+          target: "~/.k3s_deploys/${{ github.event.repository.name }}/"
 
       - name: Deploy on Server Ubuntu (K3s)
         uses: appleboy/ssh-action@v1.0.3
@@ -58,4 +74,11 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
-          run: sudo k3s kubectl apply -f deploy.yaml --record
+          script: |
+            export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+            
+            # Aplica o arquivo da pasta onde o SCP salvou
+            sudo kubectl apply -f ~/.k3s_deploys/${{ github.event.repository.name }}/deploy.yaml
+            
+            # Garante que o Kubernetes faça o restart dos pods com a nova imagem do Docker Hub
+            sudo kubectl rollout restart deployment/cinesuggest-deployment || true
