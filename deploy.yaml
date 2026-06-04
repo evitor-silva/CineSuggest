@@ -71,7 +71,7 @@ spec:
             - name: SPRING_DATASOURCE_DRIVER_CLASS_NAME
               value: "oracle.jdbc.OracleDriver"
             - name: SPRING_JPA_HIBERNATE_DDL_AUTO
-              value: "update"
+              value: "create"
 
 
 ---
