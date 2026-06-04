@@ -75,10 +75,8 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+            # Executa o apply apontando direto para o arquivo de configuração do www-data
+                    k3s kubectl --kubeconfig=/var/www/.kube/config apply -f ~/.k3s_deploys/${{ github.event.repository.name }}/deploy.yaml
             
-            # Aplica o arquivo da pasta onde o SCP salvou
-            sudo kubectl apply -f ~/.k3s_deploys/${{ github.event.repository.name }}/deploy.yaml
-            
-            # Garante que o Kubernetes faça o restart dos pods com a nova imagem do Docker Hub
-            sudo kubectl rollout restart deployment/cinesuggest-deployment || true
+            # Reinicia os pods do deploy
+                    k3s kubectl --kubeconfig=/var/www/.kube/config rollout restart deployment/cinesuggest-deployment || true

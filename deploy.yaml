@@ -64,7 +64,7 @@ spec:
             - containerPort: 8080
           env:
             - name: SPRING_DATASOURCE_URL
-              value: "jdbc:oracle:thin:@oracle-db-service:1521/cinedb"
+              value: "jdbc:oracle:thin:@oracle-db-service:1521/FREE"
             - name: SPRING_DATASOURCE_USERNAME
               value: "SYSTEM"
             - name: SPRING_DATASOURCE_PASSWORD
@@ -93,7 +93,6 @@ metadata:
   name: cinesuggest-ingress
   annotations:
     kubernetes.io/ingress.class: "nginx"
-    # Novas Annotations para o SSL funcionar:
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
 spec:
