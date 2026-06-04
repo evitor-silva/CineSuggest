@@ -92,10 +92,9 @@ kind: Ingress
 metadata:
   name: cinesuggest-ingress
   annotations:
-    kubernetes.io/ingress.class: "nginx"
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
 spec:
+  ingressClassName: traefik
   tls:
     - hosts:
         - api-cinesuggest.evitorsilva.site
