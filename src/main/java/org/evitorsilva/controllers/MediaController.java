@@ -1,5 +1,6 @@
 package org.evitorsilva.controllers;
 
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.evitorsilva.entities.MediaEntity;
 import org.evitorsilva.util.DTO.requests.MediaRequest;
@@ -31,7 +32,7 @@ public class MediaController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/media")
-    public ResponseEntity create(@RequestBody MediaRequest request) {
+    public ResponseEntity create(@Valid  @RequestBody MediaRequest request) {
         mediaService.create(request);
         return ResponseEntity.status(201).build();
     }
@@ -40,7 +41,7 @@ public class MediaController {
     @PutMapping("/media/{id}")
     public ResponseEntity update(
             @PathVariable Long id,
-            @RequestBody MediaRequest request) {
+            @Valid @RequestBody MediaRequest request) {
         mediaService.update(id, request);
         return ResponseEntity.ok().build();
     }
