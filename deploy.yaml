@@ -21,8 +21,12 @@ spec:
             - containerPort: 1521
           env:
             - name: ORACLE_PWD
-              value: "$ORACLE_PASSWORD"
+              value: ${{ secrets.ORACLE_PASSWORD }}
             - name: ORACLE_PDB
+              spring:
+                jpa:
+                  hibernate:
+                    ddl-auto=update:
               value: "cinedb"
 
 ---
@@ -68,9 +72,12 @@ spec:
             - name: SPRING_DATASOURCE_USERNAME
               value: "SYSTEM"
             - name: SPRING_DATASOURCE_PASSWORD
-              value: "$ORACLE_PASSWORD"
+              value: ${{ secrets.ORACLE_PASSWORD }}
             - name: SPRING_DATASOURCE_DRIVER_CLASS_NAME
               value: "oracle.jdbc.OracleDriver"
+            - name: SPRING_JPA_HIBERNATE_DDL_AUTO
+              value: "update"
+
 
 ---
 apiVersion: v1
