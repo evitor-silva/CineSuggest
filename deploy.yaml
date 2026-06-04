@@ -112,17 +112,13 @@ spec:
                 port:
                   number: 80
 ---
-apiVersion: cert-manager.io/v1
-kind: ClusterIssuer
+apiVersion: networking.k8s.io/v1
+kind: Ingress
 metadata:
-  name: letsencrypt-prod
+  name: cinesuggest-ingress
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    kubernetes.io/tls-acme: "true"
+    traefik.ingress.kubernetes.io/router.tls: "true"
 spec:
-  acme:
-    server: https://acme-v02.api.letsencrypt.org/directory
-    email: ceja.vitorgabriel.e.silva@gmail.com
-    privateKeySecretRef:
-      name: letsencrypt-prod-account-key
-    solvers:
-      - http01:
-          ingress:
-            ingressClassName: traefik
+  ingressClassName: traefik
