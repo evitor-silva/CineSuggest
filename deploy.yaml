@@ -21,7 +21,7 @@ spec:
             - containerPort: 1521
           env:
             - name: ORACLE_PWD
-              value: {{ secrets.ORACLE_PASSWORD }}
+              value: "DSFDSFDSFDSE"
 
 ---
 apiVersion: v1
@@ -66,7 +66,7 @@ spec:
             - name: SPRING_DATASOURCE_USERNAME
               value: "SYSTEM"
             - name: SPRING_DATASOURCE_PASSWORD
-              value: ${{ secrets.ORACLE_PASSWORD }}
+              value: "DSFDSFDSFDSE"
             - name: SPRING_DATASOURCE_DRIVER_CLASS_NAME
               value: "oracle.jdbc.OracleDriver"
             - name: SPRING_JPA_HIBERNATE_DDL_AUTO
