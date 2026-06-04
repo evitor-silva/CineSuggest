@@ -23,11 +23,6 @@ spec:
             - name: ORACLE_PWD
               value: ${{ secrets.ORACLE_PASSWORD }}
             - name: ORACLE_PDB
-              spring:
-                jpa:
-                  hibernate:
-                    ddl-auto=update:
-              value: "cinedb"
 
 ---
 apiVersion: v1
