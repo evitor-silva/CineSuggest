@@ -75,7 +75,10 @@ spec:
               value: "org.hibernate.dialect.OracleDialect"
             - name: SPRING_JPA_PROPERTIES_HIBERNATE_DEFAULT_SCHEMA
               value: "SYSTEM"
-
+            - name: SPRING_JPA_PROPERTIES_HIBERNATE_HBM2DDL_IMPORT_FILES_GENERATION
+              value: "just-create"
+            - name: SPRING_JPA_SHOW_SQL
+              value: "true"
 ---
 apiVersion: v1
 kind: Service
