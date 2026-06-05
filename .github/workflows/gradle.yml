@@ -75,8 +75,10 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            # Executa o apply apontando direto para o arquivo de configuração do www-data
+                    k3s kubectl --kubeconfig=/var/www/.kube/config create secret generic oracle-db-secrets \
+                      --from-literal=database-password="${{ secrets.ORACLE_DB_PASSWORD }}" \
+                      --from-literal=jwt=${{ secrets.JWT }}"
+            
                     k3s kubectl --kubeconfig=/var/www/.kube/config apply -f ~/.k3s_deploys/${{ github.event.repository.name }}/deploy.yaml
             
-            # Reinicia os pods do deploy
                     k3s kubectl --kubeconfig=/var/www/.kube/config rollout restart deployment/cinesuggest-deployment || true

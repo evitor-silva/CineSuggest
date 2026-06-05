@@ -21,7 +21,10 @@ spec:
             - containerPort: 1521
           env:
             - name: ORACLE_PWD
-              value: "DSFDSFDSFDSE"
+              valueFrom:
+                secretKeyRef:
+                  name: oracle-db-secrets
+                  key: database-password
 
 ---
 apiVersion: v1
@@ -66,11 +69,19 @@ spec:
             - name: SPRING_DATASOURCE_USERNAME
               value: "SYSTEM"
             - name: SPRING_DATASOURCE_PASSWORD
-              value: "DSFDSFDSFDSE"
+              valueFrom:
+                secretKeyRef:
+                  name: oracle-db-secrets
+                  key: database-password
             - name: SPRING_DATASOURCE_DRIVER_CLASS_NAME
               value: "oracle.jdbc.OracleDriver"
             - name: SPRING_JPA_HIBERNATE_DDL_AUTO
               value: "create"
+            - name: API_SECURITY_TOKEN_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: oracle-db-secrets
+                  key: jwt
             - name: SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT
               value: "org.hibernate.dialect.OracleDialect"
             - name: SPRING_JPA_PROPERTIES_HIBERNATE_HBM2DDL_IMPORT_FILES_GENERATION
@@ -83,7 +94,7 @@ kind: Service
 metadata:
   name: cinesuggest-service
 spec:
-  type: ClusterIP
+  type: LoadBalancer
   selector:
     app: cinesuggest
   ports:
