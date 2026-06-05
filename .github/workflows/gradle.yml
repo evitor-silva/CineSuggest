@@ -74,31 +74,17 @@ jobs:
             username: ${{ secrets.SERVER_USER }}
             key: ${{ secrets.SSH_PRIVATE_KEY }}
             port: 22
+            envs: ORACLE_DB_PASSWORD,JWT_SECRET
             script: |
               cd ~/.k3s_deploys/${{ github.event.repository.name }}/
               
-              # 1. Limpa o Secret antigo para evitar conflitos de chaves
               k3s kubectl --kubeconfig=/var/www/.kube/config delete secret oracle-db-secrets --ignore-not-found=true
               
-              # 2. Escreve os segredos em arquivos limpos (as aspas em 'EOF' blindam os caracteres especiais)
-              cat << 'EOF' > db_pass.txt
-              ${{ secrets.ORACLE_DB_PASSWORD }}
-              EOF
-              
-              cat << 'EOF' > jwt_sec.txt
-              ${{ secrets.JWT_SECRET }}
-              EOF
-              
-              # 3. CRIAÇÃO NATIVA: O Kubernetes lê os arquivos e mapeia as chaves correspondentes
               k3s kubectl --kubeconfig=/var/www/.kube/config create secret generic oracle-db-secrets \
-              --from-file=database-password=db_pass.txt \
-              --from-file=jwt=jwt_sec.txt
+                --from-literal=database-password="$ORACLE_DB_PASSWORD" \
+                --from-literal=jwt="$JWT_SECRET"
               
-              # 4. Remove os arquivos de texto imediatamente por segurança
-              rm -f db_pass.txt jwt_sec.txt
-              
-              # 5. Aplica a infraestrutura da sua aplicação
               k3s kubectl --kubeconfig=/var/www/.kube/config apply -f deploy.yaml
               
-              # 6. Reinicia a aplicação para carregar o Secret atualizado do Kubernetes
               k3s kubectl --kubeconfig=/var/www/.kube/config rollout restart deployment/cinesuggest-deployment
+              k3s kubectl --kubeconfig=/var/www/.kube/config rollout restart deployment/oracle-db-deployment
