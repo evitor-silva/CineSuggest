@@ -75,7 +75,7 @@ spec:
             - containerPort: 8080
           env:
             - name: SPRING_DATASOURCE_URL
-              value: "jdbc:oracle:thin:@oracle-db-service:1521/FREE"
+              value: "jdbc:oracle:thin:@oracle-db-service:1521/FREEPDB1"
             - name: SPRING_DATASOURCE_USERNAME
               value: "SYSTEM"
             - name: SPRING_DATASOURCE_PASSWORD
