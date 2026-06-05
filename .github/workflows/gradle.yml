@@ -82,11 +82,8 @@ jobs:
           script: |
             cd ~/.k3s_deploys/$REPO_NAME/
             
-            # O Linux troca as marcações ${ORACLE_DB_PASSWORD} e ${JWT_SECRET} pelas senhas reais do GitHub
             envsubst < deploy.yaml > deploy_final.yaml
             
-            # O Kubernetes aplica o arquivo já com os valores reais injetados
             k3s kubectl --kubeconfig=/var/www/.kube/config apply -f deploy_final.yaml
             
-            # Deleta o arquivo temporário por segurança
             rm -f deploy_final.yaml
