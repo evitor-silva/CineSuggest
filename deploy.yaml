@@ -94,7 +94,7 @@ kind: Service
 metadata:
   name: cinesuggest-service
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   selector:
     app: cinesuggest
   ports:
