@@ -70,22 +70,23 @@ jobs:
       - name: Deploy on Server Ubuntu (K3s)
         uses: appleboy/ssh-action@v1.0.3
         env:
-          DB_PASSWORD: ${{ secrets.ORACLE_DB_PASSWORD }}
+          ORACLE_DB_PASSWORD: ${{ secrets.ORACLE_DB_PASSWORD }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          REPO_NAME: ${{ github.event.repository.name }}
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
-          envs: DB_PASSWORD,JWT_SECRET
+          envs: ORACLE_DB_PASSWORD,JWT_SECRET,REPO_NAME
           script: |
-            k3s kubectl --kubeconfig=/var/www/.kube/config delete secret oracle-db-secrets --ignore-not-found=true
+            cd ~/.k3s_deploys/$REPO_NAME/
             
-            k3s kubectl --kubeconfig=/var/www/.kube/config create secret generic oracle-db-secrets \
-              --from-literal=database-password="$DB_PASSWORD" \
-              --from-literal=jwt="$JWT_SECRET"
+            # O Linux troca as marcações ${ORACLE_DB_PASSWORD} e ${JWT_SECRET} pelas senhas reais do GitHub
+            envsubst < deploy.yaml > deploy_final.yaml
             
-            k3s kubectl --kubeconfig=/var/www/.kube/config apply -f ~/.k3s_deploys/${{ github.event.repository.name }}/deploy.yaml
+            # O Kubernetes aplica o arquivo já com os valores reais injetados
+            k3s kubectl --kubeconfig=/var/www/.kube/config apply -f deploy_final.yaml
             
-            k3s kubectl --kubeconfig=/var/www/.kube/config rollout restart deployment/oracle-db-deployment || true
-            k3s kubectl --kubeconfig=/var/www/.kube/config rollout restart deployment/cinesuggest-deployment || true
+            # Deleta o arquivo temporário por segurança
+            rm -f deploy_final.yaml
