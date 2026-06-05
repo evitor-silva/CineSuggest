@@ -70,7 +70,6 @@ jobs:
       - name: Deploy on Server Ubuntu (K3s)
         uses: appleboy/ssh-action@v1.0.3
         env:
-            # Injeta os secrets do GitHub com segurança como variáveis locais do step
           DB_PASSWORD: ${{ secrets.ORACLE_DB_PASSWORD }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
         with:
@@ -78,7 +77,6 @@ jobs:
             username: ${{ secrets.SERVER_USER }}
             key: ${{ secrets.SSH_PRIVATE_KEY }}
             port: 22
-            # ISSO É O MAIS IMPORTANTE: Transmite as variáveis acima para dentro do servidor sem quebrar as aspas
             envs: DB_PASSWORD,JWT_SECRET
             script: |
               # 1. Cria ou atualiza o Secret usando as variáveis protegidas por aspas duplas simples do bash
