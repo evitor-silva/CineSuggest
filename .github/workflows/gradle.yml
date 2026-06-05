@@ -69,18 +69,24 @@ jobs:
 
       - name: Deploy on Server Ubuntu (K3s)
         uses: appleboy/ssh-action@v1.0.3
-        with:
+        env:
+          DB_PASSWORD: ${{ secrets.ORACLE_DB_PASSWORD }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          envs: ORACLE_DB_PASSWORD,JWT_SECRET
           port: 22
+          envs: DB_PASSWORD,JWT_SECRET
           script: |
-                    k3s kubectl --kubeconfig=/var/www/.kube/config create secret generic oracle-db-secrets \
-                      --from-literal=database-password="${{ secrets.ORACLE_DB_PASSWORD }}" \
-                      --from-literal=jwt=${{ secrets.JWT }}" \
-                      --dry-run=client -o yaml | k3s kubectl --kubeconfig=/var/www/.kube/config apply -f - 
-            
-                    k3s kubectl --kubeconfig=/var/www/.kube/config apply -f ~/.k3s_deploys/${{ github.event.repository.name }}/deploy.yaml
-            
-                    k3s kubectl --kubeconfig=/var/www/.kube/config rollout restart deployment/cinesuggest-deployment || true
+                # 1. Cria ou atualiza o Secret usando as variáveis protegidas por aspas duplas simples do bash
+                k3s kubectl --kubeconfig=/var/www/.kube/config create secret generic oracle-db-secrets \
+                  --from-literal=database-password="$DB_PASSWORD" \
+                  --from-literal=jwt="$JWT_SECRET" \
+                  --dry-run=client -o yaml | k3s kubectl --kubeconfig=/var/www/.kube/config apply -f -
+                
+                # 2. Executa o apply do arquivo de deploy
+                k3s kubectl --kubeconfig=/var/www/.kube/config apply -f ~/.k3s_deploys/${{ github.event.repository.name }}/deploy.yaml
+                
+                # 3. Reinicia os pods afetados para subir as novas credenciais
+                k3s kubectl --kubeconfig=/var/www/.kube/config rollout restart deployment/oracle-db-deployment || true
+                k3s kubectl --kubeconfig=/var/www/.kube/config rollout restart deployment/cinesuggest-deployment || true
