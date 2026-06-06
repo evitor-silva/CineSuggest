@@ -57,16 +57,6 @@ jobs:
         run: |
           sed -i 's|cinesuggest:latest|cinesuggest:${{ github.sha }}|g' deploy.yaml
 
-      - name: Copy deploy.yaml to Server
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 22
-          source: "deploy.yaml"
-          target: "~/.k3s_deploys/${{ github.event.repository.name }}/"
-
       - name: Deploy on Server Ubuntu (K3s)
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -78,13 +68,25 @@ jobs:
             script: |
               cd ~/.k3s_deploys/${{ github.event.repository.name }}/
               
+              # Remove quebras de linha ocultas (\r) caso o arquivo tenha sido salvo no Windows
+              CLEAN_PWD=$(echo "$ORACLE_DB_PASSWORD" | tr -d '\r')
+              CLEAN_JWT=$(echo "$JWT_SECRET" | tr -d '\r')
+              
+              # 1. Limpa o Secret antigo
               k3s kubectl --kubeconfig=/var/www/.kube/config delete secret oracle-db-secrets --ignore-not-found=true
               
+              # 2. Cria o Secret usando as variáveis limpas com aspas simples para evitar expansão indesejada de símbolos
               k3s kubectl --kubeconfig=/var/www/.kube/config create secret generic oracle-db-secrets \
-                --from-literal=database-password="$ORACLE_DB_PASSWORD" \
-                --from-literal=jwt="$JWT_SECRET"
+                --from-literal=database-password=''"$CLEAN_PWD"'' \
+                --from-literal=jwt='''"$CLEAN_JWT"'''
               
+              # 3. Aplica o manifesto atualizado
               k3s kubectl --kubeconfig=/var/www/.kube/config apply -f deploy.yaml
               
-              k3s kubectl --kubeconfig=/var/www/.kube/config rollout restart deployment/cinesuggest-deployment
+              # 4. Reinicia os serviços para lerem os novos dados
               k3s kubectl --kubeconfig=/var/www/.kube/config rollout restart deployment/oracle-db-deployment
+              
+              # Aguarda 10 segundos para o banco começar a subir com a nova senha antes de chutar a app
+              sleep 10 
+              
+              k3s kubectl --kubeconfig=/var/www/.kube/config rollout restart deployment/cinesuggest-deployment
