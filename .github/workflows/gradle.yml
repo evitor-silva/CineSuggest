@@ -76,8 +76,10 @@ jobs:
             port: 22
             script: |
               RAW_PWD='${{ secrets.ORACLE_PASSWORD }}'
+              RAW_JWT='${{ secrets.JWT }}'
               
               CLEAN_PWD=$(echo "$RAW_PWD" | tr -d '\r')
+              CLEAN_JWT=$(echo "$RAW_JWT" | tr -d '\r')
               
               KUBECONFIG_PATH="/var/www/.kube/config"
               DEPLOY_DIR="~/.k3s_deploys/${{ github.event.repository.name }}"
@@ -85,12 +87,10 @@ jobs:
               k3s kubectl --kubeconfig=$KUBECONFIG_PATH delete secret oracle-db-secrets --ignore-not-found=true
               
               k3s kubectl --kubeconfig=$KUBECONFIG_PATH create secret generic oracle-db-secrets \
-                --from-literal=database-password="$CLEAN_PWD"
+                --from-literal=database-password="$CLEAN_PWD" \
+                --from-literal=jwt="$CLEAN_JWT"
               
               k3s kubectl --kubeconfig=$KUBECONFIG_PATH apply -f $DEPLOY_DIR/deploy.yaml
               
               k3s kubectl --kubeconfig=$KUBECONFIG_PATH rollout restart deployment/oracle-db-deployment
               k3s kubectl --kubeconfig=$KUBECONFIG_PATH rollout restart deployment/cinesuggest-deployment
-              
-              k3s kubectl --kubeconfig=$KUBECONFIG_PATH rollout status deployment/oracle-db-deployment --timeout=90s
-              k3s kubectl --kubeconfig=$KUBECONFIG_PATH rollout status deployment/cinesuggest-deployment --timeout=90s
