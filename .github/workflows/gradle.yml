@@ -78,12 +78,9 @@ jobs:
           port: 22
           envs: ORACLE_PASSWORD
           script: |
-            k3s kubectl --kubeconfig=/var/www/.kube/config delete secret oracle-db-secrets --ignore-not-found=true
-            
             k3s kubectl --kubeconfig=/var/www/.kube/config create secret generic oracle-db-secrets \
               --from-literal=database-password="$ORACLE_PASSWORD"
             
             k3s kubectl --kubeconfig=/var/www/.kube/config apply -f ~/.k3s_deploys/${{ github.event.repository.name }}/deploy.yaml
             
-            k3s kubectl --kubeconfig=/var/www/.kube/config rollout restart deployment/oracle-db-deployment
             k3s kubectl --kubeconfig=/var/www/.kube/config rollout restart deployment/cinesuggest-deployment || true
