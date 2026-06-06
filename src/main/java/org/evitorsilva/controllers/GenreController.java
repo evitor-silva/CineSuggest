@@ -1,6 +1,5 @@
 package org.evitorsilva.controllers;
 
-import jakarta.validation.Valid;
 import org.evitorsilva.services.GenreService;
 import org.evitorsilva.util.DTO.requests.GenreRequest;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +21,7 @@ public class GenreController {
     }
 
     @PostMapping
-    public ResponseEntity create(@Valid @RequestBody GenreRequest request) {
+    public ResponseEntity create(@RequestBody GenreRequest request) {
         genreService.create(request);
         return ResponseEntity.ok('D');
     }
@@ -31,7 +30,7 @@ public class GenreController {
     @PutMapping("/genre/{id}")
     public ResponseEntity update(
             @PathVariable Long id,
-            @Valid @RequestBody GenreRequest request) {
+            @RequestBody GenreRequest request) {
         genreService.update(id, request);
         return ResponseEntity.ok().build();
     }

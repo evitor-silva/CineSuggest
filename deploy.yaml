@@ -21,10 +21,8 @@ spec:
             - containerPort: 1521
           env:
             - name: ORACLE_PWD
-              valueFrom:
-                secretKeyRef:
-                  name: oracle-db-secrets
-                  key: database-password
+              value: ${{ secrets.ORACLE_PASSWORD }}
+            - name: ORACLE_PDB
 
 ---
 apiVersion: v1
@@ -65,27 +63,16 @@ spec:
             - containerPort: 8080
           env:
             - name: SPRING_DATASOURCE_URL
-              value: "jdbc:oracle:thin:@oracle-db-service:1521/FREEPDB1"
+              value: "jdbc:oracle:thin:@oracle-db-service:1521/FREE"
             - name: SPRING_DATASOURCE_USERNAME
               value: "SYSTEM"
             - name: SPRING_DATASOURCE_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: oracle-db-secrets
-                  key: database-password
+              value: ${{ secrets.ORACLE_PASSWORD }}
             - name: SPRING_DATASOURCE_DRIVER_CLASS_NAME
               value: "oracle.jdbc.OracleDriver"
             - name: SPRING_JPA_HIBERNATE_DDL_AUTO
               value: "create"
-            - name: JWT_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: oracle-db-secrets
-                  key: jwt
-            - name: SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT
-              value: "org.hibernate.dialect.OracleDialect"
-            - name: SPRING_JPA_SHOW_SQL
-              value: "true"
+
 
 ---
 apiVersion: v1

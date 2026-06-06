@@ -1,6 +1,5 @@
 package org.evitorsilva.controllers;
 
-import jakarta.validation.Valid;
 import org.evitorsilva.util.DTO.requests.CreateUserRequest;
 import org.evitorsilva.util.DTO.requests.LoginRequest;
 import org.evitorsilva.services.JwtService;
@@ -32,15 +31,13 @@ public class UserController {
     }
 
     @PostMapping("/user")
-    public ResponseEntity createUser(@Valid @RequestBody CreateUserRequest createUserRequest) {
-        System.out.print(createUserRequest);
+    public ResponseEntity createUser(@RequestBody CreateUserRequest createUserRequest) {
         userService.createUser(createUserRequest);
         return ResponseEntity.ok("200");
     }
 
     @PostMapping("/login")
-    public ResponseEntity<TokenUserLogged> loginUser(@Valid @RequestBody LoginRequest request) {
-
+    public ResponseEntity<TokenUserLogged> loginUser(@RequestBody LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.email(), request.password())
         );
