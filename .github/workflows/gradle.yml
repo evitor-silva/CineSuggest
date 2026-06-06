@@ -69,18 +69,28 @@ jobs:
 
       - name: Deploy on Server Ubuntu (K3s)
         uses: appleboy/ssh-action@v1.0.3
-        env:
-          ORACLE_PASSWORD: ${{ secrets.ORACLE_PASSWORD }}
         with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 22
-          envs: ORACLE_PASSWORD
-          script: |
-            k3s kubectl --kubeconfig=/var/www/.kube/config create secret generic oracle-db-secrets \
-              --from-literal=database-password="$ORACLE_PASSWORD"
-            
-            k3s kubectl --kubeconfig=/var/www/.kube/config apply -f ~/.k3s_deploys/${{ github.event.repository.name }}/deploy.yaml
-            
-            k3s kubectl --kubeconfig=/var/www/.kube/config rollout restart deployment/cinesuggest-deployment || true
+            host: ${{ secrets.SERVER_HOST }}
+            username: ${{ secrets.SERVER_USER }}
+            key: ${{ secrets.SSH_PRIVATE_KEY }}
+            port: 22
+            script: |
+              RAW_PWD='${{ secrets.ORACLE_PASSWORD }}'
+              
+              CLEAN_PWD=$(echo "$RAW_PWD" | tr -d '\r')
+              
+              KUBECONFIG_PATH="/var/www/.kube/config"
+              DEPLOY_DIR="~/.k3s_deploys/${{ github.event.repository.name }}"
+              
+              k3s kubectl --kubeconfig=$KUBECONFIG_PATH delete secret oracle-db-secrets --ignore-not-found=true
+              
+              k3s kubectl --kubeconfig=$KUBECONFIG_PATH create secret generic oracle-db-secrets \
+                --from-literal=database-password="$CLEAN_PWD"
+              
+              k3s kubectl --kubeconfig=$KUBECONFIG_PATH apply -f $DEPLOY_DIR/deploy.yaml
+              
+              k3s kubectl --kubeconfig=$KUBECONFIG_PATH rollout restart deployment/oracle-db-deployment
+              k3s kubectl --kubeconfig=$KUBECONFIG_PATH rollout restart deployment/cinesuggest-deployment
+              
+              k3s kubectl --kubeconfig=$KUBECONFIG_PATH rollout status deployment/oracle-db-deployment --timeout=90s
+              k3s kubectl --kubeconfig=$KUBECONFIG_PATH rollout status deployment/cinesuggest-deployment --timeout=90s
