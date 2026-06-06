@@ -14,7 +14,7 @@ import java.util.Set;
 
 @Service
 public class JwtService {
-    @Value("${api.security.token.secret}")
+    @Value("${jwt.secret}")
     private String tokenSecret;
     private Algorithm algorithm;
 
