@@ -20,9 +20,12 @@ spec:
           ports:
             - containerPort: 1521
           env:
+            # Consumindo a senha de forma segura via K8s Secrets
             - name: ORACLE_PWD
-              value: ${{ secrets.ORACLE_PASSWORD }}
-            - name: ORACLE_PDB
+              valueFrom:
+                secretKeyRef:
+                  name: oracle-db-secrets
+                  key: database-password
 
 ---
 apiVersion: v1
@@ -66,13 +69,16 @@ spec:
               value: "jdbc:oracle:thin:@oracle-db-service:1521/FREE"
             - name: SPRING_DATASOURCE_USERNAME
               value: "SYSTEM"
+            # Consumindo a senha de forma segura via K8s Secrets
             - name: SPRING_DATASOURCE_PASSWORD
-              value: ${{ secrets.ORACLE_PASSWORD }}
+              valueFrom:
+                secretKeyRef:
+                  name: oracle-db-secrets
+                  key: database-password
             - name: SPRING_DATASOURCE_DRIVER_CLASS_NAME
               value: "oracle.jdbc.OracleDriver"
             - name: SPRING_JPA_HIBERNATE_DDL_AUTO
               value: "create"
-
 
 ---
 apiVersion: v1
