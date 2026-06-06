@@ -1,13 +1,3 @@
-apiVersion: v1
-kind: Secret
-metadata:
-  name: oracle-db-secrets
-type: Opaque
-stringData:
-  database-password: "${ORACLE_DB_PASSWORD}"
-  jwt: "${JWT_SECRET}"
-
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -31,7 +21,10 @@ spec:
             - containerPort: 1521
           env:
             - name: ORACLE_PWD
-              value: "dsfdsf"
+              valueFrom:
+                secretKeyRef:
+                  name: oracle-db-secrets
+                  key: database-password
 
 ---
 apiVersion: v1
@@ -76,7 +69,10 @@ spec:
             - name: SPRING_DATASOURCE_USERNAME
               value: "SYSTEM"
             - name: SPRING_DATASOURCE_PASSWORD
-              value: "dsfdsf"
+              valueFrom:
+                secretKeyRef:
+                  name: oracle-db-secrets
+                  key: database-password
             - name: SPRING_DATASOURCE_DRIVER_CLASS_NAME
               value: "oracle.jdbc.OracleDriver"
             - name: SPRING_JPA_HIBERNATE_DDL_AUTO
