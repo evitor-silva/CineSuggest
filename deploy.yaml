@@ -20,7 +20,6 @@ spec:
           ports:
             - containerPort: 1521
           env:
-            # Consumindo a senha de forma segura via K8s Secrets
             - name: ORACLE_PWD
               valueFrom:
                 secretKeyRef:
@@ -69,7 +68,6 @@ spec:
               value: "jdbc:oracle:thin:@oracle-db-service:1521/FREE"
             - name: SPRING_DATASOURCE_USERNAME
               value: "SYSTEM"
-            # Consumindo a senha de forma segura via K8s Secrets
             - name: SPRING_DATASOURCE_PASSWORD
               valueFrom:
                 secretKeyRef:

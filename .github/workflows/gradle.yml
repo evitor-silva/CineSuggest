@@ -69,6 +69,8 @@ jobs:
 
       - name: Deploy on Server Ubuntu (K3s)
         uses: appleboy/ssh-action@v1.0.3
+        env:
+          ORACLE_PASSWORD: ${{ secrets.ORACLE_PASSWORD }}
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
