@@ -3,6 +3,7 @@ package org.evitorsilva.controllers;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.evitorsilva.exceptions.UserNotLoggedException;
+import org.evitorsilva.util.DTO.response.NotFound;
 import org.evitorsilva.util.DTO.response.UserNotLogged;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,7 @@ import org.springframework.security.authentication.InsufficientAuthenticationExc
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.time.LocalDateTime;
 
@@ -19,6 +21,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(JWTVerificationException.class)
     public ResponseEntity<UserNotLogged> handleJwtError(JWTVerificationException ex, HttpServletRequest request) {
         return buildResponse("Token expirado", request);
+    }
+
+    @ExceptionHandler(NoHandlerFoundException.class)
+    public ResponseEntity<NotFound> handleNotFound(NoHandlerFoundException ex) {
+        NotFound erro = new NotFound(
+                HttpStatus.NOT_FOUND.value(),
+                "A rota solicitada não foi encontrada em nosso servidor.",
+                System.currentTimeMillis()
+        );
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(erro);
     }
 
     @ExceptionHandler(InsufficientAuthenticationException.class)

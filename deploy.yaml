@@ -67,7 +67,7 @@ spec:
             - name: SPRING_DATASOURCE_URL
               value: "jdbc:oracle:thin:@oracle-db-service:1521/FREE"
             - name: SPRING_DATASOURCE_USERNAME
-              value: "SYSTEM"
+              value: "cinesuggest_user"
             - name: SPRING_DATASOURCE_PASSWORD
               valueFrom:
                 secretKeyRef:

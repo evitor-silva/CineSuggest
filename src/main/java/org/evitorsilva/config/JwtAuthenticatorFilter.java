@@ -19,6 +19,7 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
@@ -56,15 +57,24 @@ public class JwtAuthenticatorFilter extends OncePerRequestFilter {
                     .map(SimpleGrantedAuthority::new)
                     .collect(Collectors.toList());
 
+            UUID userId = UUID.fromString(decodedJWT.getSubject());
+
             UsernamePasswordAuthenticationToken authToken =
-                    new UsernamePasswordAuthenticationToken(claims.get("name"), null, authorities);
+                    new UsernamePasswordAuthenticationToken(userId, null, authorities);
 
             SecurityContextHolder.getContext().setAuthentication(authToken);
 
             filterChain.doFilter(request, response);
 
         } catch (Exception e) {
-            resolver.resolveException(request, response, null, e);
+
+            System.out.print(e);
+            if (e instanceof com.auth0.jwt.exceptions.JWTVerificationException || e instanceof IllegalArgumentException) {
+                filterChain.doFilter(request, response);
+
+            } else {
+                resolver.resolveException(request, response, null, e);
+            }
         }
     }
 }

@@ -6,6 +6,7 @@ import org.evitorsilva.entities.AuthorityEntity;
 import org.evitorsilva.entities.UserEntity;
 import org.evitorsilva.repositories.UserRepository;
 import org.evitorsilva.repositories.AuthorityRepository;
+import org.evitorsilva.util.Interfaces.IUserDetails;
 import org.jspecify.annotations.NullMarked;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -50,17 +51,9 @@ public class UserService implements UserDetailsService {
     }
 
     @Override
-    public @NullMarked UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public @NullMarked IUserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        UserEntity userOpt = this.findUser(username)
+        return this.findUser(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-
-        return new User(
-                userOpt.getEmail(),
-                userOpt.getPassword(),
-                userOpt.getRoles().stream()
-                        .map(role -> new SimpleGrantedAuthority(role.getAuthority()))
-                        .collect(Collectors.toList())
-        );
     }
 }

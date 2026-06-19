@@ -1,5 +1,6 @@
 package org.evitorsilva.config;
 
+import jakarta.servlet.DispatcherType;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -37,8 +38,9 @@ public class filterConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/user").permitAll()
                         .requestMatchers("/login").permitAll()
-                        .requestMatchers(HttpMethod.GET,"/media").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/media/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/genre").permitAll()
+                        .requestMatchers("/error").permitAll()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex
