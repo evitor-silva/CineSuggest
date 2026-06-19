@@ -59,7 +59,7 @@ spec:
             - containerPort: 8080
           env:
             - name: SPRING_DATASOURCE_URL
-              value: "jdbc:oracle:thin:@oracle-db-service:1521/FREE"
+              value: "jdbc:oracle:thin:@oracle-db-service:1521/FREEPDB1"
             - name: SPRING_DATASOURCE_USERNAME
               value: "cinesuggest_user"
             - name: SPRING_DATASOURCE_PASSWORD
@@ -69,9 +69,8 @@ spec:
                   key: database-password
             - name: SPRING_DATASOURCE_DRIVER_CLASS_NAME
               value: "oracle.jdbc.OracleDriver"
-            - name: SPRING_JPA_PROPERTIES_HIBERNATS_DEFAULT_SCHEMA
+            - name: SPRING_JPA_PROPERTIES_HIBERNATE_DEFAULT_SCHEMA
               value: "CINESUGGEST_USER"
-
 
 ---
 apiVersion: v1
