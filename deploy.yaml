@@ -19,12 +19,6 @@ spec:
           image: container-registry.oracle.com/database/free:latest
           ports:
             - containerPort: 1521
-          env:
-            - name: ORACLE_PWD
-              valueFrom:
-                secretKeyRef:
-                  name: oracle-db-secrets
-                  key: database-password
 
 ---
 apiVersion: v1
