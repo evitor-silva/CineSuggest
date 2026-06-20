@@ -55,7 +55,7 @@ jobs:
 
       - name: Replace image tag in deployment template
         run: |
-          sed -i 's|vitoresbr/cinesuggest:latest|vitoresbr/cinesuggest:${{ github.sha }}|g' deploy.yaml
+          sed -i 's|cinesuggest:latest|cinesuggest:${{ github.sha }}|g' deploy.yaml
 
       - name: Copy deploy.yaml to Server
         uses: appleboy/scp-action@v0.1.7
