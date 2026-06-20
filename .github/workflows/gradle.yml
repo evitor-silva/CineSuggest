@@ -70,26 +70,26 @@ jobs:
       - name: Deploy on Server Ubuntu (K3s)
         uses: appleboy/ssh-action@v1.0.3
         with:
-            host: ${{ secrets.SERVER_HOST }}
-            username: ${{ secrets.SERVER_USER }}
-            key: ${{ secrets.SSH_PRIVATE_KEY }}
-            port: 22
-            script: |
-              RAW_PWD='${{ secrets.ORACLE_PASSWORD }}'
-              RAW_JWT='${{ secrets.JWT }}'
-              
-              CLEAN_PWD=$(echo "$RAW_PWD" | tr -d '\r')
-              CLEAN_JWT=$(echo "$RAW_JWT" | tr -d '\r')
-              KUBECONFIG_PATH="/var/www/.kube/config"
-              DEPLOY_DIR="~/.k3s_deploys/${{ github.event.repository.name }}"
-              
-              k3s kubectl --kubeconfig=$KUBECONFIG_PATH delete secret oracle-db-secrets --ignore-not-found=true
-              
-              k3s kubectl --kubeconfig=$KUBECONFIG_PATH create secret generic oracle-db-secrets \
-                --from-literal=database-password="$CLEAN_PWD" \
-                --from-literal=jwt="$CLEAN_JWT"
-              
-              k3s kubectl --kubeconfig=$KUBECONFIG_PATH apply -f $DEPLOY_DIR/deploy.yaml
-              
-#              k3s kubectl --kubeconfig=$KUBECONFIG_PATH rollout restart deployment/oracle-db-deployment
-              k3s kubectl --kubeconfig=$KUBECONFIG_PATH rollout restart deployment/cinesuggest-deployment
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            RAW_PWD="${{ secrets.ORACLE_PASSWORD }}"
+            RAW_JWT="${{ secrets.JWT }}"
+            
+            CLEAN_PWD=$(echo "$RAW_PWD" | tr -d '\r')
+            CLEAN_JWT=$(echo "$RAW_JWT" | tr -d '\r')
+            
+            KUBECONFIG_PATH="/var/www/.kube/config"
+            DEPLOY_DIR="/home/${{ secrets.SERVER_USER }}/.k3s_deploys/${{ github.event.repository.name }}"
+            
+            k3s kubectl --kubeconfig=$KUBECONFIG_PATH delete secret oracle-db-secrets --ignore-not-found=true
+            
+            k3s kubectl --kubeconfig=$KUBECONFIG_PATH create secret generic oracle-db-secrets \
+              --from-literal=database-password="$CLEAN_PWD" \
+              --from-literal=jwt="$CLEAN_JWT"
+            
+            k3s kubectl --kubeconfig=$KUBECONFIG_PATH apply -f $DEPLOY_DIR/deploy.yaml
+            
+            k3s kubectl --kubeconfig=$KUBECONFIG_PATH rollout restart deployment/cinesuggest-deployment
