@@ -80,7 +80,6 @@ jobs:
               
               CLEAN_PWD=$(echo "$RAW_PWD" | tr -d '\r')
               CLEAN_JWT=$(echo "$RAW_JWT" | tr -d '\r')
-              
               KUBECONFIG_PATH="/var/www/.kube/config"
               DEPLOY_DIR="~/.k3s_deploys/${{ github.event.repository.name }}"
               
