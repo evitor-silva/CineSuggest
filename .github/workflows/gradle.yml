@@ -92,5 +92,5 @@ jobs:
               
               k3s kubectl --kubeconfig=$KUBECONFIG_PATH apply -f $DEPLOY_DIR/deploy.yaml
               
-              k3s kubectl --kubeconfig=$KUBECONFIG_PATH rollout restart deployment/oracle-db-deployment
+#              k3s kubectl --kubeconfig=$KUBECONFIG_PATH rollout restart deployment/oracle-db-deployment
               k3s kubectl --kubeconfig=$KUBECONFIG_PATH rollout restart deployment/cinesuggest-deployment
