@@ -1,6 +1,7 @@
 package org.evitorsilva.config;
 
-import jakarta.servlet.DispatcherType;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Info;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +20,13 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 
 
 @Configuration
+@OpenAPIDefinition(
+        info = @Info(
+                title = "API Cinesuggest",
+                version = "1.0",
+                description = "Documentação da API"
+        )
+)
 @EnableWebSecurity
 @EnableMethodSecurity
 public class filterConfig {
@@ -40,6 +48,7 @@ public class filterConfig {
                         .requestMatchers("/login").permitAll()
                         .requestMatchers(HttpMethod.GET, "/media/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/genre").permitAll()
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**").permitAll()
                         .requestMatchers("/error").permitAll()
                         .anyRequest().authenticated()
                 )

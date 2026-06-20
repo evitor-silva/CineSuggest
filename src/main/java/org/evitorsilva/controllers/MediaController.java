@@ -1,23 +1,16 @@
 package org.evitorsilva.controllers;
 
-import lombok.extern.slf4j.Slf4j;
 import org.evitorsilva.entities.MediaEntity;
 import org.evitorsilva.util.DTO.requests.MediaRequest;
 import org.evitorsilva.services.MediaService;
 import org.evitorsilva.util.DTO.response.MediaResponse;
-import org.evitorsilva.util.Interfaces.IUserDetails;
-import org.evitorsilva.util.annotations.CurrentUserID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.web.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.Optional;
-import java.util.UUID;
 
-@Slf4j
 @RestController
 public class MediaController {
 

@@ -42,22 +42,26 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<TokenUserLogged> loginUser(@RequestBody @NotNull LoginRequest request) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.email(), request.password())
-        );
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(request.email(), request.password())
+            );
 
-        IUserDetails userLogged = (IUserDetails) authentication.getPrincipal();
+            IUserDetails userLogged = (IUserDetails) authentication.getPrincipal();
 
-        assert userLogged != null;
-        UUID userId = userLogged.getId();
+            assert userLogged != null;
+            UUID userId = userLogged.getId();
 
-        Set<GrantedAuthority> roles = authentication.getAuthorities().stream()
-                .filter(auth -> auth.getAuthority() != null && auth.getAuthority().startsWith("ROLE"))
-                .collect(Collectors.toSet());
+            Set<GrantedAuthority> roles = authentication.getAuthorities().stream()
+                    .filter(auth -> auth.getAuthority() != null && auth.getAuthority().startsWith("ROLE"))
+                    .collect(Collectors.toSet());
 
-        String token = jwtService.create(authentication.getName(), userId, roles);
+            String token = jwtService.create(authentication.getName(), userId, roles);
 
-        return ResponseEntity.status(201).body(new TokenUserLogged(token, "Bearer"));
+            return ResponseEntity.status(201).body(new TokenUserLogged(token, "Bearer"));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }
