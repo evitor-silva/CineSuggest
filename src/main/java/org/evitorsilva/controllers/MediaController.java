@@ -1,5 +1,7 @@
 package org.evitorsilva.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.evitorsilva.entities.MediaEntity;
 import org.evitorsilva.util.DTO.requests.MediaRequest;
 import org.evitorsilva.services.MediaService;
@@ -46,6 +48,7 @@ public class MediaController {
 
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
     @PostMapping("/media")
     public ResponseEntity create(@RequestBody MediaRequest request) {
         mediaService.create(request);
@@ -54,6 +57,7 @@ public class MediaController {
 
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
     @PutMapping("/media/{id}")
     public ResponseEntity update(
             @PathVariable Long id,
@@ -63,6 +67,7 @@ public class MediaController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
     @DeleteMapping("/media/{id}")
     public ResponseEntity delete(
             @PathVariable Long id) {

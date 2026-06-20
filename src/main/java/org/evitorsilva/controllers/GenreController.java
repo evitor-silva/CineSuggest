@@ -1,5 +1,7 @@
 package org.evitorsilva.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.evitorsilva.services.GenreService;
 import org.evitorsilva.util.DTO.requests.GenreRequest;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +29,7 @@ public class GenreController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
     @PutMapping("/genre/{id}")
     public ResponseEntity update(
             @PathVariable Long id,
@@ -36,6 +39,7 @@ public class GenreController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
     @DeleteMapping("/genre/{id}")
     public ResponseEntity delete(
             @PathVariable Long id) {
