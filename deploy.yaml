@@ -17,9 +17,15 @@ spec:
       containers:
         - name: oracle-db-container
           image: container-registry.oracle.com/database/free:latest
+          volumeMounts:
+            - name: oracle-data-volume
+              mountPath: /opt/oracle/oradata
           ports:
             - containerPort: 1521
-
+      volumes:
+        - name: oracle-data-volume
+          persistentVolumeClaim:
+            claimName: oracle-db-pvc
 ---
 apiVersion: v1
 kind: Service
