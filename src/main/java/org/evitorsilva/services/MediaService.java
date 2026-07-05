@@ -43,11 +43,6 @@ public class  MediaService {
     public Optional<MediaResponse> get(String title) {
         Optional<MediaEntity> mediaOptional = mediaRepository.findByTitle(title);
 
-        if (mediaOptional.isPresent()) {
-            System.out.println("SUCESSO: Encontrou a mídia no banco! -> " + mediaOptional.get().getTitle());
-        } else {
-            System.out.println("AVISO: O banco de dados retornou VAZIO para o título: [" + title + "]");
-        }
         return mediaRepository.findByTitle(title)
                 .map(media -> new MediaResponse(
                         media.getTitle(),

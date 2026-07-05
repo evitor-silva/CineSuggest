@@ -1,5 +1,6 @@
 package org.evitorsilva.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,11 +29,12 @@ public class MediaEntity {
     private int episodes;
     private int seasons;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-            name = "media_genre",
+            name = "medias_genres",
             joinColumns = @JoinColumn(name = "media_id"),
             inverseJoinColumns = @JoinColumn(name = "genre_id")
     )
+    @JsonIgnoreProperties("medias")
     private Set<GenresEntity> genres = new HashSet<>();
 }

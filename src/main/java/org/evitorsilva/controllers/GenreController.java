@@ -22,7 +22,9 @@ public class GenreController {
         return ResponseEntity.ok(genreService.get());
     }
 
-    @PostMapping
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Operation(security = { @SecurityRequirement(name = "bearerAuth") })
+    @PostMapping("/genre")
     public ResponseEntity create(@RequestBody GenreRequest request) {
         genreService.create(request);
         return ResponseEntity.ok('D');
