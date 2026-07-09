@@ -37,8 +37,6 @@ spec:
               value: org.hibernate.dialect.OracleDialect
             - name: SPRING_DATASOURCE_DRIVER_CLASS_NAME
               value: "oracle.jdbc.OracleDriver"
-            - name: SPRING_JPA_PROPERTIES_HIBERNATE_DEFAULT_SCHEMA
-              value: "CINESUGGEST_USER"
 
 ---
 apiVersion: v1
