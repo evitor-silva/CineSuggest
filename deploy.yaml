@@ -1,49 +1,6 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: oracle-db-deployment
-  labels:
-    app: oracle-db
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: oracle-db
-  template:
-    metadata:
-      labels:
-        app: oracle-db
-    spec:
-      containers:
-        - name: oracle-db-container
-          image: container-registry.oracle.com/database/free:latest
-          volumeMounts:
-            - name: oracle-data-volume
-              mountPath: /opt/oracle/oradata
-          ports:
-            - containerPort: 1521
-      volumes:
-        - name: oracle-data-volume
-          persistentVolumeClaim:
-            claimName: oracle-db-pvc
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: oracle-db-service
-spec:
-  type: ClusterIP
-  selector:
-    app: oracle-db
-  ports:
-    - protocol: TCP
-      port: 1521
-      targetPort: 1521
-
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
   name: cinesuggest-deployment
   labels:
     app: cinesuggest-api
@@ -65,7 +22,7 @@ spec:
             - containerPort: 8080
           env:
             - name: SPRING_DATASOURCE_URL
-              value: "jdbc:oracle:thin:@oracle-db-service:1521/FREEPDB1"
+              value: "jdbc:oracle:thin:adb.sa-saopaulo-1.oraclecloud.com:1521/FREEPDB1"
             - name: SPRING_DATASOURCE_USERNAME
               value: "cinesuggest_user"
             - name: SPRING_DATASOURCE_PASSWORD

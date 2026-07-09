@@ -1,7 +1,6 @@
 package org.evitorsilva.controllers;
 
 import jakarta.validation.constraints.NotNull;
-import org.evitorsilva.entities.UserEntity;
 import org.evitorsilva.util.DTO.requests.CreateUserRequest;
 import org.evitorsilva.util.DTO.requests.LoginRequest;
 import org.evitorsilva.services.JwtService;
@@ -13,14 +12,13 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@RequestMapping("/user")
 @RestController
 public class UserController {
 
@@ -34,7 +32,7 @@ public class UserController {
         this.authenticationManager = authenticationManager;
     }
 
-    @PostMapping("/user")
+    @PostMapping("/")
     public ResponseEntity createUser(@RequestBody CreateUserRequest createUserRequest) {
         userService.createUser(createUserRequest);
         return ResponseEntity.ok("200");
