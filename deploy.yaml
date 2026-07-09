@@ -22,7 +22,10 @@ spec:
             - containerPort: 8080
           env:
             - name: SPRING_DATASOURCE_URL
-              value: "jdbc:oracle:thin:adb.sa-saopaulo-1.oraclecloud.com:1521/FREEPDB1"
+              valueFrom:
+                secretKeyRef:
+                  name: oracle-db-secrets
+                  key: url
             - name: SPRING_DATASOURCE_USERNAME
               value: "cinesuggest_user"
             - name: SPRING_DATASOURCE_PASSWORD
